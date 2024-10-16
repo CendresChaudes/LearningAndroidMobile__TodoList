@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--    Default    -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!--    Project    -->
+    <color name="green">#FF9CFF79</color>
+    <color name="orange">#FFFFE778</color>
+    <color name="red">#FFFF9979</color>
 </resources>
