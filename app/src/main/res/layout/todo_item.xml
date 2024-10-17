@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
     android:padding="24dp"
-    android:textSize="22sp"
+    android:textSize="18sp"
     android:textStyle="bold"
     tools:background="@color/green"
     tools:text="Some text" />

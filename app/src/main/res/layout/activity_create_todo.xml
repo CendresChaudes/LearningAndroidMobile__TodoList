@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/enter_todo_text_hint"
             android:inputType="textPersonName"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <RadioGroup
             android:id="@+id/radioGroupPriorities"
@@ -39,7 +39,7 @@
                 android:background="@color/green"
                 android:padding="16dp"
                 android:text="@string/low"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <RadioButton
                 android:id="@+id/radioButtonMediumPriority"
@@ -48,7 +48,7 @@
                 android:background="@color/orange"
                 android:padding="16dp"
                 android:text="@string/medium"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <RadioButton
                 android:id="@+id/radioButtonHighPriority"
@@ -57,7 +57,7 @@
                 android:background="@color/red"
                 android:padding="16dp"
                 android:text="@string/high"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
         </RadioGroup>
 
         <Button
