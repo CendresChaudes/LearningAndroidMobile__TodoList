@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void _setupListeners() {
         this._setupCreateTodoButtonListener();
-        this._setupTodosAdapterListener();
+        this._setupTodoTouchHelper();
     }
 
     private void _setupCreateTodoButtonListener() {
@@ -63,17 +64,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void _setupTodosAdapterListener() {
-        this._todosAdapter.setOnTodoClickListener(new TodosAdapter.IOnTodoClickListener() {
-            @Override
-            public void onTodoClick(Todo todo) {
-                _database.remove(todo.getId());
-                _renderTodos();
-            }
-        });
+    private void _setupTodoTouchHelper() {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT
+                ) {
+                    @Override
+                    public boolean onMove(
+                            @NonNull RecyclerView recyclerView,
+                            @NonNull RecyclerView.ViewHolder viewHolder,
+                            @NonNull RecyclerView.ViewHolder target
+                    ) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(
+                            @NonNull RecyclerView.ViewHolder viewHolder,
+                            int direction
+                    ) {
+                        int position = viewHolder.getAdapterPosition();
+                        Todo todo = _todosAdapter.getTodos().get(position);
+                        _database.remove(todo.getId());
+                        _renderTodos();
+                    }
+                });
+
+        itemTouchHelper.attachToRecyclerView(_recyclerViewTodos);
     }
 
-    private void _setupTodosRecyclerView()  {
+    private void _setupTodosRecyclerView() {
         this._recyclerViewTodos.setAdapter(this._todosAdapter);
     }
 

@@ -21,6 +21,10 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHol
         this._onTodoClickListener = onTodoClickListener;
     }
 
+    public ArrayList<Todo> getTodos() {
+        return new ArrayList<>(this._todos);
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     public void setTodos(ArrayList<Todo> todos) {
         this._todos = todos;
