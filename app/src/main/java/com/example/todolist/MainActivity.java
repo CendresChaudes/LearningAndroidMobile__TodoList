@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this._initViews();
 
-        this._setupCreateTodoButtonListener();
+        this._setupListeners();
         this._setupTodosRecyclerView();
     }
 
@@ -49,11 +49,26 @@ public class MainActivity extends AppCompatActivity {
         this._buttonCreateTodo = findViewById(R.id.buttonCreateTodo);
     }
 
+    private void _setupListeners() {
+        this._setupCreateTodoButtonListener();
+        this._setupTodosAdapterListener();
+    }
+
     private void _setupCreateTodoButtonListener() {
         this._buttonCreateTodo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _launchCreateTodoScreen();
+            }
+        });
+    }
+
+    private void _setupTodosAdapterListener() {
+        this._todosAdapter.setOnTodoClickListener(new TodosAdapter.IOnTodoClickListener() {
+            @Override
+            public void onTodoClick(Todo todo) {
+                _database.remove(todo.getId());
+                _renderTodos();
             }
         });
     }

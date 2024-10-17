@@ -15,6 +15,12 @@ import java.util.ArrayList;
 public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHolder> {
     private ArrayList<Todo> _todos = new ArrayList<>();
 
+    private IOnTodoClickListener _onTodoClickListener;
+
+    public void setOnTodoClickListener(IOnTodoClickListener onTodoClickListener) {
+        this._onTodoClickListener = onTodoClickListener;
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     public void setTodos(ArrayList<Todo> todos) {
         this._todos = todos;
@@ -42,6 +48,15 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHol
         int colorResId = this._getColorIdByPriority(todo.getPriority());
         int color = ContextCompat.getColor(holder.itemView.getContext(), colorResId);
         textViewTodo.setBackgroundColor(color);
+
+        textViewTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (_onTodoClickListener != null) {
+                    _onTodoClickListener.onTodoClick(todo);
+                }
+            }
+        });
     }
 
     @Override
@@ -73,5 +88,9 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHol
         public TextView getTextViewTodo() {
             return this._textViewTodo;
         }
+    }
+
+    interface IOnTodoClickListener {
+        void onTodoClick(Todo todo);
     }
 }
