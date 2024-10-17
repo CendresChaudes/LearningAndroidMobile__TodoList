@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Todo List</string>
     <string name="create_new_todo">Create new todo</string>
+    <string name="enter_todo_text_hint">Enter todo text</string>
+    <string name="create">Create</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
 </resources>
