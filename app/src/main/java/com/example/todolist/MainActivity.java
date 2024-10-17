@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -18,7 +19,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private Database _database = Database.getInstance();
 
-    private LinearLayout _linearLayoutTodos;
+    private RecyclerView _recyclerViewTodos;
+    private TodosAdapter _todosAdapter = new TodosAdapter();
     private FloatingActionButton _buttonCreateTodo;
 
     @Override
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         this._initViews();
 
         this._setupCreateTodoButtonListener();
+        this._setupTodosRecyclerView();
     }
 
     @Override
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void _initViews() {
-        this._linearLayoutTodos = findViewById(R.id.linearLayoutTodos);
+        this._recyclerViewTodos = findViewById(R.id.recyclerViewTodos);
         this._buttonCreateTodo = findViewById(R.id.buttonCreateTodo);
     }
 
@@ -55,37 +58,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void _renderTodos() {
-        this._linearLayoutTodos.removeAllViews();
-
-        for (Todo todo : this._database.getTodos()) {
-            View view = getLayoutInflater().inflate(
-                    R.layout.todo_item,
-                    this._linearLayoutTodos,
-                    false
-            );
-
-            TextView textViewTodo = view.findViewById(R.id.textViewTodo);
-
-            textViewTodo.setText(todo.getText());
-            int colorResId = this._getColorIdByPriority(todo.getPriority());
-            int color = ContextCompat.getColor(this, colorResId);
-            textViewTodo.setBackgroundColor(color);
-
-            this._linearLayoutTodos.addView(view);
-        }
+    private void _setupTodosRecyclerView()  {
+        this._recyclerViewTodos.setAdapter(this._todosAdapter);
     }
 
-    private int _getColorIdByPriority(int priority) throws RuntimeException {
-        switch (priority) {
-            case 1:
-                return R.color.green;
-            case 2:
-                return R.color.orange;
-            case 3:
-                return R.color.red;
-            default:
-                throw new RuntimeException("Priority doesn't support");
-        }
+    private void _renderTodos() {
+        this._todosAdapter.setTodos(this._database.getTodos());
     }
 }

@@ -17,7 +17,7 @@ public class Database {
     private ArrayList<Todo> _todos = new ArrayList<>();
 
     private Database() {
-        this._createMockTodos(10);
+        this._createMockTodos(20);
     }
 
     public void add(Todo todo) {
