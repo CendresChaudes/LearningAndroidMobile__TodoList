@@ -6,4 +6,5 @@
     <string name="low">Low</string>
     <string name="medium">Medium</string>
     <string name="high">High</string>
+    <string name="you_should_fill_all_values">You should fill all values</string>
 </resources>

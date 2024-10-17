@@ -1,27 +1,25 @@
 package com.example.todolist;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+    private Database _database = Database.getInstance();
+
     private LinearLayout _linearLayoutTodos;
     private FloatingActionButton _buttonCreateTodo;
-
-    private ArrayList<Todo> _todos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +27,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this._initViews();
 
-        _createMockTodos(10);
-        _renderTodos();
+        this._setupCreateTodoButtonListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this._renderTodos();
+    }
+
+    private void _launchCreateTodoScreen() {
+        Intent intent = CreateTodoActivity.createIntent(this);
+        startActivity(intent);
     }
 
     private void _initViews() {
@@ -38,22 +46,19 @@ public class MainActivity extends AppCompatActivity {
         this._buttonCreateTodo = findViewById(R.id.buttonCreateTodo);
     }
 
-    private void _createMockTodos(int count) {
-        Random randomPriority = new Random();
-
-        for (int i = 0; i < count; i++) {
-            Todo todo = new Todo(
-                    i + 1,
-                    "Todo № " + i,
-                    randomPriority.nextInt(3) + 1
-            );
-
-            this._todos.add(todo);
-        }
+    private void _setupCreateTodoButtonListener() {
+        this._buttonCreateTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _launchCreateTodoScreen();
+            }
+        });
     }
 
     private void _renderTodos() {
-        for (Todo todo : this._todos) {
+        this._linearLayoutTodos.removeAllViews();
+
+        for (Todo todo : this._database.getTodos()) {
             View view = getLayoutInflater().inflate(
                     R.layout.todo_item,
                     this._linearLayoutTodos,
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             );
 
             TextView textViewTodo = view.findViewById(R.id.textViewTodo);
+
             textViewTodo.setText(todo.getText());
             int colorResId = this._getColorIdByPriority(todo.getPriority());
             int color = ContextCompat.getColor(this, colorResId);
@@ -70,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private int _getColorIdByPriority(int priority) throws RuntimeException  {
-        switch(priority) {
+    private int _getColorIdByPriority(int priority) throws RuntimeException {
+        switch (priority) {
             case 1:
                 return R.color.green;
             case 2:
