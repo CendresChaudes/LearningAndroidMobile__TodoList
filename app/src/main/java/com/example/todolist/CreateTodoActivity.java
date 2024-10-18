@@ -18,7 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class CreateTodoActivity extends AppCompatActivity {
-    private Database _database = Database.getInstance();
+    private TodoListDatabase _database;
 
     private EditText _editTextEnterTodoText;
     private RadioGroup _radioGroupPriorities;
@@ -36,7 +36,12 @@ public class CreateTodoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_todo);
+        this._initActivity();
+    }
+
+    private void _initActivity() {
         this._initViews();
+        this._initDb();
 
         this._setupListeners();
         this._setupPriorityByDefault();
@@ -49,6 +54,10 @@ public class CreateTodoActivity extends AppCompatActivity {
         this._radioButtonMediumPriority = findViewById(R.id.radioButtonMediumPriority);
         this._radioButtonHighPriority = findViewById(R.id.radioButtonHighPriority);
         this._buttonCreateTodo = findViewById(R.id.buttonCreateTodo);
+    }
+
+    private void _initDb() {
+        this._database = TodoListDatabase.getInstance(getApplication());
     }
 
     private void _setupPriorityByDefault() {
@@ -75,8 +84,8 @@ public class CreateTodoActivity extends AppCompatActivity {
         boolean isValid = !text.isEmpty() && priority != 0;
 
         if (isValid) {
-            Todo todo = new Todo(this._database.size(), text, priority);
-            this._database.add(todo);
+            Todo todo = new Todo(text, priority);
+            this._database.todosDao().createTodo(todo);
 
             finish();
         } else {

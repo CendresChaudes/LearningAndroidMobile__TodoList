@@ -1,5 +1,6 @@
 package com.example.todolist;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,20 +19,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private Database _database = Database.getInstance();
+    private TodoListDatabase _database;
 
     private RecyclerView _recyclerViewTodos;
-    private TodosAdapter _todosAdapter = new TodosAdapter();
+    private TodosAdapter _todosAdapter;
     private FloatingActionButton _buttonCreateTodo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this._initViews();
-
-        this._setupListeners();
-        this._setupTodosRecyclerView();
+        this._initActivity();
     }
 
     @Override
@@ -45,9 +43,26 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void _initActivity() {
+        this._initViews();
+        this._initDb();
+        this._initTodoAdapter();
+
+        this._setupListeners();
+        this._setupTodosRecyclerView();
+    }
+
     private void _initViews() {
         this._recyclerViewTodos = findViewById(R.id.recyclerViewTodos);
         this._buttonCreateTodo = findViewById(R.id.buttonCreateTodo);
+    }
+
+    private void _initDb() {
+        this._database = TodoListDatabase.getInstance(getApplication());
+    }
+
+    private void _initTodoAdapter() {
+        _todosAdapter = new TodosAdapter();
     }
 
     private void _setupListeners() {
@@ -84,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         int position = viewHolder.getAdapterPosition();
                         Todo todo = _todosAdapter.getTodos().get(position);
-                        _database.remove(todo.getId());
+                        _database.todosDao().deleteTodo(todo.getId());
                         _renderTodos();
                     }
                 });
@@ -97,6 +112,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void _renderTodos() {
-        this._todosAdapter.setTodos(this._database.getTodos());
+        this._todosAdapter.setTodos(this._database.todosDao().getTodos());
     }
 }

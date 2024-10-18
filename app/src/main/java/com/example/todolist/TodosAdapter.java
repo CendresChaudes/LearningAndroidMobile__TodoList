@@ -11,22 +11,23 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHolder> {
-    private ArrayList<Todo> _todos = new ArrayList<>();
+    private List<Todo> _todos = new ArrayList<>();
 
-    private IOnTodoClickListener _onTodoClickListener;
+    private OnTodoClickListener _onTodoClickListener;
 
-    public void setOnTodoClickListener(IOnTodoClickListener onTodoClickListener) {
+    public void setOnTodoClickListener(OnTodoClickListener onTodoClickListener) {
         this._onTodoClickListener = onTodoClickListener;
     }
 
-    public ArrayList<Todo> getTodos() {
+    public List<Todo> getTodos() {
         return new ArrayList<>(this._todos);
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setTodos(ArrayList<Todo> todos) {
+    public void setTodos(List<Todo> todos) {
         this._todos = todos;
         notifyDataSetChanged();
     }
@@ -94,7 +95,7 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHol
         }
     }
 
-    interface IOnTodoClickListener {
+    interface OnTodoClickListener {
         void onTodoClick(Todo todo);
     }
 }
