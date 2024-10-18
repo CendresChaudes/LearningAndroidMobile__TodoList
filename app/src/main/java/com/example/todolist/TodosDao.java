@@ -1,5 +1,6 @@
 package com.example.todolist;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface TodosDao {
 
     @Query("SELECT * FROM todos")
-    List<Todo> getTodos();
+    LiveData<List<Todo>> getTodos();
 
     @Insert
     void createTodo(Todo todo);

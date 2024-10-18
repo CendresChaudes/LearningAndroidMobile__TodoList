@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,7 +18,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TodoListDatabase _database;
-    private Handler _handler;
     private TodosAdapter _todosAdapter;
 
     private RecyclerView _recyclerViewTodos;
@@ -30,12 +30,6 @@ public class MainActivity extends AppCompatActivity {
         this._initActivity();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        this._renderTodos();
-    }
-
     private void _launchCreateTodoScreen() {
         Intent intent = CreateTodoActivity.createIntent(this);
         startActivity(intent);
@@ -45,10 +39,10 @@ public class MainActivity extends AppCompatActivity {
         this._initViews();
         this._initDb();
         this._initTodoAdapter();
-        this._initHandler();
 
         this._setupListeners();
         this._setupTodosRecyclerView();
+        this._setupGetTodosLiveDataObserver();
     }
 
     private void _initViews() {
@@ -64,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
         _todosAdapter = new TodosAdapter();
     }
 
-    private void _initHandler() {
-        this._handler = new Handler(Looper.getMainLooper());
-    }
-
     private void _setupListeners() {
         this._setupCreateTodoButtonListener();
         this._setupTodoTouchHelper();
@@ -78,6 +68,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 _launchCreateTodoScreen();
+            }
+        });
+    }
+
+    private void _setupGetTodosLiveDataObserver(){
+        this._database.todosDao().getTodos().observe(this, new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                _todosAdapter.setTodos(todos);
             }
         });
     }
@@ -107,13 +106,6 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 _database.todosDao().deleteTodo(todo.getId());
-
-                                _handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        _renderTodos();
-                                    }
-                                });
                             }
                         }).start();
                     }
@@ -124,21 +116,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void _setupTodosRecyclerView() {
         this._recyclerViewTodos.setAdapter(this._todosAdapter);
-    }
-
-    private void _renderTodos() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Todo> todos = _database.todosDao().getTodos();
-
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        _todosAdapter.setTodos(todos);
-                    }
-                });
-            }
-        }).start();
     }
 }
