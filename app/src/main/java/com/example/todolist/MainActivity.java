@@ -1,28 +1,26 @@
 package com.example.todolist;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TodoListDatabase _database;
+    private Handler _handler;
+    private TodosAdapter _todosAdapter;
 
     private RecyclerView _recyclerViewTodos;
-    private TodosAdapter _todosAdapter;
     private FloatingActionButton _buttonCreateTodo;
 
     @Override
@@ -47,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         this._initViews();
         this._initDb();
         this._initTodoAdapter();
+        this._initHandler();
 
         this._setupListeners();
         this._setupTodosRecyclerView();
@@ -63,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void _initTodoAdapter() {
         _todosAdapter = new TodosAdapter();
+    }
+
+    private void _initHandler() {
+        this._handler = new Handler(Looper.getMainLooper());
     }
 
     private void _setupListeners() {
@@ -99,8 +102,20 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         int position = viewHolder.getAdapterPosition();
                         Todo todo = _todosAdapter.getTodos().get(position);
-                        _database.todosDao().deleteTodo(todo.getId());
-                        _renderTodos();
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                _database.todosDao().deleteTodo(todo.getId());
+
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _renderTodos();
+                                    }
+                                });
+                            }
+                        }).start();
                     }
                 });
 
@@ -112,6 +127,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void _renderTodos() {
-        this._todosAdapter.setTodos(this._database.todosDao().getTodos());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Todo> todos = _database.todosDao().getTodos();
+
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _todosAdapter.setTodos(todos);
+                    }
+                });
+            }
+        }).start();
     }
 }

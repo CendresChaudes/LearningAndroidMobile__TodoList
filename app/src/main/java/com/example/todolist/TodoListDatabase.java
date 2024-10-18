@@ -15,12 +15,11 @@ public abstract class TodoListDatabase extends RoomDatabase {
     public static TodoListDatabase getInstance(Application application) {
         if (_instance == null) {
             _instance = Room.databaseBuilder(
-                    application,
-                    TodoListDatabase.class,
-                    DB_NAME
-            )
+                            application,
+                            TodoListDatabase.class,
+                            DB_NAME
+                    )
                     .addMigrations(new TodoTableTodoListDatabaseMigration())
-                    .allowMainThreadQueries()
                     .build();
         }
 

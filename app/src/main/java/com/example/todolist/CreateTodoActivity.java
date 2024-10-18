@@ -3,6 +3,8 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,15 +12,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class CreateTodoActivity extends AppCompatActivity {
     private TodoListDatabase _database;
+    private Handler _handler;
 
     private EditText _editTextEnterTodoText;
     private RadioGroup _radioGroupPriorities;
@@ -42,6 +41,7 @@ public class CreateTodoActivity extends AppCompatActivity {
     private void _initActivity() {
         this._initViews();
         this._initDb();
+        this._initHandler();
 
         this._setupListeners();
         this._setupPriorityByDefault();
@@ -58,6 +58,10 @@ public class CreateTodoActivity extends AppCompatActivity {
 
     private void _initDb() {
         this._database = TodoListDatabase.getInstance(getApplication());
+    }
+
+    private void _initHandler() {
+        this._handler = new Handler(Looper.getMainLooper());
     }
 
     private void _setupPriorityByDefault() {
@@ -85,9 +89,20 @@ public class CreateTodoActivity extends AppCompatActivity {
 
         if (isValid) {
             Todo todo = new Todo(text, priority);
-            this._database.todosDao().createTodo(todo);
 
-            finish();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    _database.todosDao().createTodo(todo);
+
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    });
+                }
+            }).start();
         } else {
             Toast.makeText(
                     CreateTodoActivity.this,
