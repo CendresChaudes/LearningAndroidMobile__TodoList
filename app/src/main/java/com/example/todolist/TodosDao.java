@@ -7,6 +7,8 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
+
 @Dao
 public interface TodosDao {
 
@@ -14,8 +16,8 @@ public interface TodosDao {
     LiveData<List<Todo>> getTodos();
 
     @Insert
-    void createTodo(Todo todo);
+    Completable createTodo(Todo todo);
 
     @Query("DELETE FROM todos WHERE id = :id")
-    void deleteTodo(int id);
+    Completable deleteTodo(int id);
 }
