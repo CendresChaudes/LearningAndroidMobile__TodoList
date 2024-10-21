@@ -3,8 +3,6 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,13 +12,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import java.util.List;
 
 public class CreateTodoActivity extends AppCompatActivity {
-    private TodoListDatabase _database;
-    private Handler _handler;
+    private CreateTodoViewModel _viewModel;
 
     private EditText _editTextEnterTodoText;
-    private RadioGroup _radioGroupPriorities;
     private RadioButton _radioButtonLowPriority;
     private RadioButton _radioButtonMediumPriority;
     private RadioButton _radioButtonHighPriority;
@@ -40,28 +40,23 @@ public class CreateTodoActivity extends AppCompatActivity {
 
     private void _initActivity() {
         this._initViews();
-        this._initDb();
-        this._initHandler();
+        this._initViewModel();
 
         this._setupListeners();
         this._setupPriorityByDefault();
+        this._setupShouldCloseScreenObserver();
     }
 
     private void _initViews() {
         this._editTextEnterTodoText = findViewById(R.id.editTextEnterTodoText);
-        this._radioGroupPriorities = findViewById(R.id.radioGroupPriorities);
         this._radioButtonLowPriority = findViewById(R.id.radioButtonLowPriority);
         this._radioButtonMediumPriority = findViewById(R.id.radioButtonMediumPriority);
         this._radioButtonHighPriority = findViewById(R.id.radioButtonHighPriority);
         this._buttonCreateTodo = findViewById(R.id.buttonCreateTodo);
     }
 
-    private void _initDb() {
-        this._database = TodoListDatabase.getInstance(getApplication());
-    }
-
-    private void _initHandler() {
-        this._handler = new Handler(Looper.getMainLooper());
+    private void _initViewModel() {
+        this._viewModel = new ViewModelProvider(this).get(CreateTodoViewModel.class);
     }
 
     private void _setupPriorityByDefault() {
@@ -81,6 +76,17 @@ public class CreateTodoActivity extends AppCompatActivity {
         });
     }
 
+    private void _setupShouldCloseScreenObserver() {
+        this._viewModel.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean shouldCloseScreen) {
+                if (shouldCloseScreen) {
+                    finish();
+                }
+            }
+        });
+    }
+
     private void _createTodo() {
         String text = this._editTextEnterTodoText.getText().toString().trim();
         int priority = this._getPriority();
@@ -89,20 +95,7 @@ public class CreateTodoActivity extends AppCompatActivity {
 
         if (isValid) {
             Todo todo = new Todo(text, priority);
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    _database.todosDao().createTodo(todo);
-
-                    _handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    });
-                }
-            }).start();
+            _viewModel.createTodo(todo);
         } else {
             Toast.makeText(
                     CreateTodoActivity.this,
