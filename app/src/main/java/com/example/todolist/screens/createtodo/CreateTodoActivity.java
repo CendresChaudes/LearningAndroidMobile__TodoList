@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.screens.createtodo;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,9 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.List;
+import com.example.todolist.R;
+import com.example.todolist.database.Todo;
 
 public class CreateTodoActivity extends AppCompatActivity {
+
     private CreateTodoViewModel _viewModel;
 
     private EditText _editTextEnterTodoText;

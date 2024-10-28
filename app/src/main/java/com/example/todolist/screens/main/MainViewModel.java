@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.screens.main;
 
 import android.app.Application;
 import android.util.Log;
@@ -6,6 +6,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.todolist.database.Todo;
+import com.example.todolist.database.TodoListDatabase;
+import com.example.todolist.database.TodosDao;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.screens.main;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -10,17 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todolist.R;
+import com.example.todolist.database.Todo;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHolder> {
+
     private List<Todo> _todos = new ArrayList<>();
-
-    private OnTodoClickListener _onTodoClickListener;
-
-    public void setOnTodoClickListener(OnTodoClickListener onTodoClickListener) {
-        this._onTodoClickListener = onTodoClickListener;
-    }
 
     public List<Todo> getTodos() {
         return new ArrayList<>(this._todos);
@@ -53,15 +51,6 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHol
         int colorResId = this._getColorIdByPriority(todo.getPriority());
         int color = ContextCompat.getColor(holder.itemView.getContext(), colorResId);
         textViewTodo.setBackgroundColor(color);
-
-        textViewTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (_onTodoClickListener != null) {
-                    _onTodoClickListener.onTodoClick(todo);
-                }
-            }
-        });
     }
 
     @Override
@@ -93,9 +82,5 @@ public class TodosAdapter extends RecyclerView.Adapter<TodosAdapter.TodosViewHol
         public TextView getTextViewTodo() {
             return this._textViewTodo;
         }
-    }
-
-    interface OnTodoClickListener {
-        void onTodoClick(Todo todo);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.screens.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todolist.R;
+import com.example.todolist.database.Todo;
+import com.example.todolist.screens.createtodo.CreateTodoActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
